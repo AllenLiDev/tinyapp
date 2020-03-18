@@ -16,8 +16,8 @@ const generateRandomString = () => {
 
 const checkForUserExists = (email) => {
   for (const user in users) {
-    if (email === user.email) {
-      return true;
+    if (email === users[user].email) {
+      return users[user].id;
     }
   }
   return false;
@@ -115,12 +115,20 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  let { email, password } = req.body;
+  let userId = checkForUserExists(email);
+  if (!userId) {
+    res.status(403).send('Username and password did not match.')
+  } else if (users[userId].password !== password) {
+    res.status(403).send('Username and password did not match.')
+  } else {
+    res.cookie('user_id', userId);
+    res.status(200).redirect("/urls");
+  }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
