@@ -47,7 +47,7 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+    user: users[req.cookies.user_id],
   };
   res.render("urls_index", templateVars);
 });
@@ -59,8 +59,9 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    user: users[req.cookies.user_id],
   };
+  console.log(req.cook)
   res.render("urls_new", templateVars);
 });
 
@@ -69,8 +70,9 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: longURL,
-    username: req.cookies["username"]
+    user: users[req.cookies.user_id]
   };
+  console.log(req.cook)
   res.render("urls_show", templateVars);
 });
 
@@ -108,12 +110,6 @@ app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect("/urls");
 });
-
-// This endpoint should add a new user object to the global users object. The user object should include the user's id, email and password, similar to the example above. To generate a random user ID, use the same function you use to generate random IDs for URLs.
-// After adding the user, set a user_id cookie containing the user's newly generated ID.
-// Redirect the user to the /urls page.
-// Test that the users object is properly being appended to. You can insert a console.log or debugger prior to the redirect logic to inspect what data the object contains.
-// Also test that the user_id cookie is being set correctly upon redirection. You already did this sort of testing in the Cookies in Express activity. Use the same approach here.
 
 app.post("/register", (req, res) => {
   let id = generateRandomString();

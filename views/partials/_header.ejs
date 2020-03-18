@@ -13,8 +13,8 @@
     </div>
   </nav>
 
-  <%if(username) { %>
-  <%- username %>
+  <%if(user) { %>
+  <%- user.email %>
   <form class="form-inline" action="/logout" method="POST">
     <button type="submit" class="btn btn-primary">logout</button>
   </form>
