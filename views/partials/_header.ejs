@@ -19,12 +19,11 @@
     <button type="submit" class="btn btn-primary">logout</button>
   </form>
   <% } else {%>
-  <form class="form-inline" action="/login" method="POST">
-    <div class="form-group mb-2">
-      <label for="username">Username:</label>
-      <input class="form-control" type="text" name="username" style="width: 300px; margin: 1em">
-      <button type="submit" class="btn btn-primary">Sign-In</button>
-    </div>
+  <form class="form-inline" action="/register" method="GET">
+    <button type="submit" class="btn btn-primary">register</button>
+  </form>
+  <form class="form-inline" action="/login" method="GET">
+    <button type="submit" class="btn btn-primary">login</button>
   </form>
   <% } %>
 </header>

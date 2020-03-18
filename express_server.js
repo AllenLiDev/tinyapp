@@ -94,6 +94,10 @@ app.get("/register", (req, res) => {
   res.render("urls_registration");
 });
 
+app.get("/login", (req, res) => {
+  res.render("urls_login");
+});
+
 app.post("/urls", (req, res) => {
   let key = generateRandomString();
   urlDatabase[key] = req.body.longURL;
