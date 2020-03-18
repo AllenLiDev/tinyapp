@@ -64,7 +64,11 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
-})
+});
+
+app.get("/register", (req, res) => {
+  res.render("urls_registration");
+});
 
 app.post("/urls", (req, res) => {
   let key = generateRandomString();
