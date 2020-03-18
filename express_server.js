@@ -12,6 +12,15 @@ const generateRandomString = () => {
     randomString += char;
   }
   return randomString;
+};
+
+const checkForUserExists = (email) => {
+  for (const user in users) {
+    if (email === user.email) {
+      return true;
+    }
+  }
+  return false;
 }
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -113,9 +122,16 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   let id = generateRandomString();
-  users[id] = { id: id, email: req.body.email, password: req.body.password };
-  res.cookie('user_id', id);
-  res.redirect('/urls');
+  let { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).send('Please enter a email and password');
+  } else if (checkForUserExists(email)) {
+    res.status(400).send('That email already exists.');
+  } else {
+    users[id] = { id: id, email: email, password: password };
+    res.cookie('user_id', id);
+    res.redirect('/urls');
+  }
 });
 
 app.listen(PORT, () => {
