@@ -11,31 +11,25 @@ app.set("view engine", "ejs");
 app.use(cookieSession({
   name: 'session',
   keys: ['testkey'],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  maxAge: 24 * 60 * 60 * 1000
 }));
 
-// DATA
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "userRandomID" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "user2RandomID" }
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "testUser" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "testUser" }
 };
 
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "123"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+  "testUser": {
+    id: "testUser",
+    email: "test@example.com",
+    password: "none"
   }
 };
 
 // routes
 app.get('/', (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -92,16 +86,22 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("urls_registration");
+  let templateVars = {
+    user: users[req.session.userId],
+  };
+  res.render("urls_registration", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  res.render("urls_login");
+  let templateVars = {
+    user: users[req.session.userId],
+  };
+  res.render("urls_login", templateVars);
 });
 
 app.post("/urls", (req, res) => {
   let key = generateRandomString();
-  urlDatabase[key] = req.body.longURL;
+  urlDatabase[key] = { longURL: req.body.longURL, userID: req.session.userId };
   res.redirect(`/urls/${key}`);
 });
 

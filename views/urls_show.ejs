@@ -8,9 +8,8 @@
   <title>URL - TinyApp Example</title>
 </head>
 
-<%- include('partials/_header') %>
-
 <body>
+  <%- include('partials/_header') %>
   <div class="card text-center">
     <div class="card-header"></div>
     <div class="card-body">
@@ -19,7 +18,7 @@
     </div>
     <div class="card-body">
       <h5 class="card-title">Edit URL</h5>
-      <form class="form text-center" action="/urls/<%- shortURL %>" method="POST">
+      <form class="form d-flex justify-content-center" action="/urls/<%- shortURL %>" method="POST">
         <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px">
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
