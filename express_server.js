@@ -38,7 +38,11 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   if (!req.session.userId) {
-    res.redirect('/login');
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "Please log-in to view your URLs"
+    };
+    res.render("urls_error", templateVars);
   } else {
     let templateVars = {
       urls: urlsForUser(req.session.userId, urlDatabase),
@@ -66,9 +70,23 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.userId) {
-    res.redirect('/login');
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "Please log-in to view your URLs"
+    };
+    res.render("urls_error", templateVars);
+  } else if (urlDatabase[req.params.shortURL] === undefined) {
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "This TinyURL does not exist."
+    };
+    res.render("urls_error", templateVars);
   } else if (urlDatabase[req.params.shortURL].userID !== req.session.userId) {
-    res.redirect('/urls');
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "You may only edit your own URLs"
+    };
+    res.render("urls_error", templateVars);
   } else {
     let longURL = urlDatabase[req.params.shortURL].longURL;
     let templateVars = {
@@ -81,8 +99,15 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  if (urlDatabase[req.params.shortURL] === undefined) {
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "This TinyURL does not exist."
+    };
+    res.render("urls_error", templateVars);
+  } else {
+    res.redirect(urlDatabase[req.params.shortURL].longURL);
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -100,9 +125,17 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  let key = generateRandomString();
-  urlDatabase[key] = { longURL: req.body.longURL, userID: req.session.userId };
-  res.redirect(`/urls/${key}`);
+  if (!req.session.userId) {
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "Please log-in to create TinyURLs"
+    };
+    res.render("urls_error", templateVars);
+  } else {
+    let key = generateRandomString();
+    urlDatabase[key] = { longURL: req.body.longURL, userID: req.session.userId };
+    res.redirect(`/urls/${key}`);
+  }
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
@@ -115,8 +148,18 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  if (req.session.userId !== urlDatabase[req.params.id].userID) {
-    res.redirect("/urls");
+  if (!req.session.userId) {
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "Please log-in to edit your URLs"
+    };
+    res.render("urls_error", templateVars);
+  } else if (req.session.userId !== urlDatabase[req.params.id].userID) {
+    let templateVars = {
+      user: users[req.session.userId],
+      message: "you can only edit your own URLs"
+    };
+    res.render("urls_error", templateVars);
   } else {
     urlDatabase[req.params.id].longURL = req.body.longURL;
     res.redirect("/urls");
